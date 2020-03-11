@@ -7,6 +7,9 @@ using Windows.UI.Xaml.Controls;
 using Windows.Graphics.Imaging;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Media;
+using Windows.Storage;
+using Windows.Graphics.Display;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace MNIST_Demo
 {
@@ -14,7 +17,7 @@ namespace MNIST_Demo
     {
         VideoFrame cropped_vf = null;
 
-        public async Task<VideoFrame> GetHandWrittenImage(Grid grid)
+        public async Task<StorageFile> GetHandWrittenImage(Grid grid)
         {
             RenderTargetBitmap renderBitmap = new RenderTargetBitmap();
 
@@ -22,13 +25,40 @@ namespace MNIST_Demo
             var buffer = await renderBitmap.GetPixelsAsync();
             var softwareBitmap = SoftwareBitmap.CreateCopyFromBuffer(buffer, BitmapPixelFormat.Bgra8, renderBitmap.PixelWidth, renderBitmap.PixelHeight, BitmapAlphaMode.Ignore);
 
-            buffer = null;
-            renderBitmap = null;
 
-            VideoFrame vf = VideoFrame.CreateWithSoftwareBitmap(softwareBitmap);
-            await CropAndDisplayInputImageAsync(vf);
+            StorageFolder installLocation = ApplicationData.Current.TemporaryFolder;
+            StorageFile file = await installLocation.CreateFileAsync("myimage.png", CreationCollisionOption.GenerateUniqueName);
 
-            return cropped_vf;
+
+            using (var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite))
+            {
+                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+
+                DisplayInformation displayInfo = DisplayInformation.GetForCurrentView();
+
+                encoder.SetSoftwareBitmap(softwareBitmap);
+
+                //encoder.SetPixelData(
+                //    BitmapPixelFormat.Bgra8,
+                //    BitmapAlphaMode.Ignore,
+                //    (uint)grid.RenderSize.Width,
+                //    (uint)grid.RenderSize.Height,
+                //    displayInfo.RawDpiX,
+                //    displayInfo.RawDpiY,
+                //    buffer.ToArray());
+
+                await encoder.FlushAsync();
+            }
+
+            return file;
+
+            //buffer = null;
+            //renderBitmap = null;
+
+            //VideoFrame vf = VideoFrame.CreateWithSoftwareBitmap(softwareBitmap);
+            //await CropAndDisplayInputImageAsync(vf);
+
+            //return cropped_vf;
         }
 
 

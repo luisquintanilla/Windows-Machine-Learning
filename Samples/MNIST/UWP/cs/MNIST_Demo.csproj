@@ -146,7 +146,16 @@
     <Content Include="Assets\mnist.onnx" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\MLModel.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="MNIST_Demo_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MNIST_DemoML.Model\MNIST_DemoML.Model.csproj">
+      <Project>{790E9614-EE79-49D2-9A2F-886BF23ACCE9}</Project>
+      <Name>MNIST_DemoML.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

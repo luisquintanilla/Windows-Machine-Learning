@@ -10,6 +10,8 @@ using Windows.AI.MachineLearning;
 using Windows.Media;
 using Windows.Storage.Streams;
 using System.Threading.Tasks;
+using MNIST_DemoML.Model;
+using Microsoft.ML;
 
 namespace MNIST_Demo
 {
@@ -50,21 +52,37 @@ namespace MNIST_Demo
         private async void recognizeButton_Click(object sender, RoutedEventArgs e)
         {
             //Bind model input with contents from InkCanvas
-            VideoFrame vf = await helper.GetHandWrittenImage(inkGrid);
-            mnistInput.Input3 = ImageFeatureValue.CreateFromVideoFrame(vf);
-            
+            StorageFile vf = await helper.GetHandWrittenImage(inkGrid);
+
             //Evaluate the model
-            mnistOutput = await modelGen.EvaluateAsync(mnistInput);
+            var prediction = await Predict(new ModelInput { ImageSource = vf.Path });
 
-            //Convert output to datatype
-            IReadOnlyList<float> vectorImage = mnistOutput.Plus214_Output_0.GetAsVectorView();
-            IList<float> imageList = vectorImage.ToList();
+            numberLabel.Text = prediction.Prediction;
 
-            //LINQ query to check for highest probability digit
-            var maxIndex = imageList.IndexOf(imageList.Max());
+            await vf.DeleteAsync();
+        }
 
-            //Display the results
-            numberLabel.Text = maxIndex.ToString();
+        private async Task<ModelOutput> Predict(ModelInput input)
+        {
+
+            // Create new MLContext
+            MLContext mlContext = new MLContext();
+
+            // Register NormalizeMapping
+            mlContext.ComponentCatalog.RegisterAssembly(typeof(NormalizeMapping).Assembly);
+
+            // Register LabelMapping
+            mlContext.ComponentCatalog.RegisterAssembly(typeof(LabelMapping).Assembly);
+
+            // Load model & create prediction engine
+            StorageFile modelFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets/MLModel.zip"));
+            //string modelPath = @"C:\Users\luquinta.REDMOND\AppData\Local\Temp\MLVSTools\MNIST_DemoML\MNIST_DemoML.Model\MLModel.zip";
+            ITransformer mlModel = mlContext.Model.Load(modelFile.Path, out var modelInputSchema);
+            var predEngine = mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(mlModel);
+
+            // Use model to make prediction on input data
+            ModelOutput result = predEngine.Predict(input);
+            return result;
         }
 
         private void clearButton_Click(object sender, RoutedEventArgs e)
