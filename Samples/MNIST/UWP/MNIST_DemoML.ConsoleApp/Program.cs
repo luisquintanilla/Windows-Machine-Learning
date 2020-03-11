@@ -11,7 +11,7 @@ namespace MNIST_DemoML.ConsoleApp
     class Program
     {
         //Dataset to use for predictions 
-        private const string DATA_FILEPATH = @"C:\Users\luquinta.REDMOND\AppData\Local\Temp\42ed6a3f-0447-41b5-8a17-ea2040b55f88.tsv";
+        private const string DATA_FILEPATH = @"C:\Users\luquinta.REDMOND\AppData\Local\Temp\35d7a59a-7669-4268-9d67-e5ba7496b710.tsv";
 
         static void Main(string[] args)
         {

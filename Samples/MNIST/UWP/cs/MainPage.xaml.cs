@@ -69,10 +69,10 @@ namespace MNIST_Demo
             MLContext mlContext = new MLContext();
 
             // Register NormalizeMapping
-            mlContext.ComponentCatalog.RegisterAssembly(typeof(NormalizeMapping).Assembly);
+            //mlContext.ComponentCatalog.RegisterAssembly(typeof(NormalizeMapping).Assembly);
 
             // Register LabelMapping
-            mlContext.ComponentCatalog.RegisterAssembly(typeof(LabelMapping).Assembly);
+            //mlContext.ComponentCatalog.RegisterAssembly(typeof(LabelMapping).Assembly);
 
             // Load model & create prediction engine
             StorageFile modelFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets/MLModel.zip"));

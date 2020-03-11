@@ -25,7 +25,7 @@
                Grid.Row="0"
                Grid.Column="0" />
         <TextBlock Text="Result:"
-               FontSize="36"
+               FontSize="20"
                VerticalAlignment="Center"
                Grid.Row="0"
                Grid.Column="1" />

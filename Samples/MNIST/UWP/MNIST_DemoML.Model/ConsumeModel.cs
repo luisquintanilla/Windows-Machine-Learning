@@ -19,12 +19,6 @@ namespace MNIST_DemoML.Model
             // Create new MLContext
             MLContext mlContext = new MLContext();
 
-            // Register NormalizeMapping
-            mlContext.ComponentCatalog.RegisterAssembly(typeof(NormalizeMapping).Assembly);
-
-            // Register LabelMapping
-            mlContext.ComponentCatalog.RegisterAssembly(typeof(LabelMapping).Assembly);
-
             // Load model & create prediction engine
             string modelPath = @"C:\Users\luquinta.REDMOND\AppData\Local\Temp\MLVSTools\MNIST_DemoML\MNIST_DemoML.Model\MLModel.zip";
             ITransformer mlModel = mlContext.Model.Load(modelPath, out var modelInputSchema);
